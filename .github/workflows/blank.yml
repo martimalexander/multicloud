@@ -44,19 +44,20 @@ jobs:
             fi
           fi
 
-          if [ ! -f "outputs.txt" ] || [ ! -f "outputs1.txt" ] || [ ! -f "outputs2.txt" ]; then
-            echo "At least one file is missing"
-          else
-            for f in outputs.txt outputs1.txt outputs2.txt; do
-              if grep -q '"full":' $f; then
-                jq -r '.data.file.url.full' $f
-              else
-                echo "No valid response in $f"
-              fi
-            done
-          fi
+      - name: Click To View 
+        run: |
+            
+             
+              for f in outputs.txt outputs1.txt outputs2.txt; do
+                if grep -q '"full":' $f; then
+                  jq -r '.data.file.url.full' $f
+                else
+                  echo "No valid response in $f"
+                fi
+              done
+           
+              echo "LONG LIVE KINDEVILS"
 
-          echo "LONG LIVE KINDEVILS"
 
 
 
