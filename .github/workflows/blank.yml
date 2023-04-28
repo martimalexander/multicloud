@@ -22,11 +22,43 @@ jobs:
 #kindevilsorg
       - name: Upload 
         run: |
-        
-         echo "👁️‍🗨️Downloading the file and Uploading to 3 Different servers👁️‍🗨️"
-         if [ -f "${{ github.event.inputs.Filename }}" ]; then filesize=$(stat -c%s "${{ github.event.inputs.Filename }}"); if ((filesize > 5000000000)); then echo "Error: The file size exceeds the 5 GB limit." >>condition.txt; else echo "File exists and its size is acceptable. Continuing to upload." >>condition.txt; fi; else echo "Error: The specified file does not exist." >>condition.txt; fi
-         if [ -f "condition.txt" ] && grep -q "File exists and its size is acceptable. Continuing to upload." "condition.txt"; then sudo apt install jq -y && curl -F "file=@${{ github.event.inputs.Filename }}" https://api.anonfiles.com/upload >>outputs.txt && curl -F "file=@${{ github.event.inputs.Filename }}" https://api.letsupload.cc/upload >>outputs1.txt && curl -F "file=@${{ github.event.inputs.Filename }}" https://api.filechan.org/upload >>outputs2.txt; else if [ -f "condition.txt" ] && grep -q "Error: The file size exceeds the 5 GB limit." "condition.txt"; then echo "File upload skipped due to file size limit."; else echo "condition.txt"; fi; fi; if [ -f "outputs.txt" ] && [ -f "outputs1.txt" ] && [ -f "outputs2.txt" ]; then for f in outputs.txt outputs1.txt outputs2.txt; do if grep -q '"full":' $f; then jq -r '.data.file.url.full' $f; else echo "No valid response in $f"; fi; done; else echo "At least one file does not exist"; fi
+          echo "👁️‍🗨️Downloading the file and Uploading to 3 Different servers👁️‍🗨️"
+          if [ -f "${{ github.event.inputs.Filename }}" ]; then
+            filesize=$(stat -c%s "${{ github.event.inputs.Filename }}")
+            if ((filesize > 5000000000)); then
+              echo "Error: The file size exceeds the 5 GB limit." >>condition.txt
+            else
+              echo "File exists and its size is acceptable. Continuing to upload." >>condition.txt
+            fi
+          else
+            echo "Error: The specified file does not exist." >>condition.txt
+          fi
 
-         echo "LONG LIVE KINDEVILS"
-         sleep 3m
-             
+          if [ -f "condition.txt" ] && grep -q "File exists and its size is acceptable. Continuing to upload." "condition.txt"; then
+            sudo apt install jq -y && curl -F "file=@${{ github.event.inputs.Filename }}" https://api.anonfiles.com/upload >>outputs.txt && curl -F "file=@${{ github.event.inputs.Filename }}" https://api.letsupload.cc/upload >>outputs1.txt && curl -F "file=@${{ github.event.inputs.Filename }}" https://api.filechan.org/upload >>outputs2.txt
+          else
+            if [ -f "condition.txt" ] && grep -q "Error: The file size exceeds the 5 GB limit." "condition.txt"; then
+              echo "File upload skipped due to file size limit."
+            else
+              echo "condition.txt"
+            fi
+          fi
+
+          if [ ! -f "outputs.txt" ] || [ ! -f "outputs1.txt" ] || [ ! -f "outputs2.txt" ]; then
+            echo "At least one file is missing"
+          else
+            for f in outputs.txt outputs1.txt outputs2.txt; do
+              if grep -q '"full":' $f; then
+                jq -r '.data.file.url.full' $f
+              else
+                echo "No valid response in $f"
+              fi
+            done
+          fi
+
+          echo "LONG LIVE KINDEVILS"
+
+
+
+
+
