@@ -18,7 +18,7 @@ jobs:
       - name: Download Directlink
         run: |
             echo "Downloading File ⚡️"
-            wget ${{ github.event.inputs.Directlink }} -O ${{ github.event.inputs.Filename }}
+            aria2c -x 16 -o "${{ github.event.inputs.Filename }}" "${{ github.event.inputs.Directlink }}"
 #kindevilsorg
       - name: Upload 
         run: |
