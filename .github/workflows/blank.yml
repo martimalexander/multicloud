@@ -47,19 +47,17 @@ jobs:
       - name: Click To View 
         run: |
             
-             
-              for f in outputs.txt outputs1.txt outputs2.txt; do
-                if grep -q '"full":' $f; then
-                  jq -r '.data.file.url.full' $f
+                if grep -q "Error" "condition.txt"; then
+                  cat condition.txt
                 else
-                  echo "No valid response in $f"
+                  for f in outputs.txt outputs1.txt outputs2.txt; do
+                    if grep -q '"full":' $f; then
+                      jq -r '.data.file.url.full' $f
+                    else
+                      echo "No valid response in $f"
+                    fi
+                  done
+                  echo "LONG LIVE KINDEVILS"
                 fi
-              done
-           
-              echo "LONG LIVE KINDEVILS"
-
-
-
-
 
 
